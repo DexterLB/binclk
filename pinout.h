@@ -20,9 +20,30 @@ const uint8_t CNT[CNT_N] = {
 #define CNT_MASK        (B8(1111)<<CNT_SHIFT)
 
 // Anode axis
+#define ANODE_N         3
 #define ANODE_PORT      PORTB
 #define ANODE_SHIFT     3
 #define ANODE_MASK      (B8(111)<<ANODE_SHIFT)
+
+/*
+ * 0 - year
+ * 1 - month
+ * 2 - day
+ * 3 - weekday
+ * 4 - hour
+ * 5 - minute
+ * 6 - second
+ */
+const uint8_t LED_MAP[CNT_N][ANODE_N][2] = {
+      {{0, 0}, {0, 1}, {1, 3}}
+    , {{0, 0}, {0, 1}, {1, 3}}
+    , {{0, 0}, {0, 1}, {1, 3}}
+    , {{0, 0}, {0, 1}, {1, 3}}
+    , {{0, 0}, {0, 1}, {1, 3}}
+    , {{0, 0}, {0, 1}, {1, 3}}
+    , {{0, 0}, {0, 1}, {1, 3}}
+    , {{0, 0}, {0, 1}, {1, 3}}
+};
 
 #define PWM_FREQ        480ul
 #define PWM_TOP ((F_CPU/PWM_FREQ) - 1)

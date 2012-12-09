@@ -4,7 +4,6 @@
 #define F_CPU 7327800ul
 
 
-#include <string.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
 

@@ -25,6 +25,40 @@ ISR(ADC_vect)   //ADC convertion complete interupt
     
 }
 
+uint8_t zeller(uint8_t year, uint8_t month, uint8_t day)
+// calculates day of the week
+{
+    return 4;   // chosen by dice roll
+}
+
+
+void display_time(struct ymdhms_t *t)
+{
+    uint8_t tt[] = {
+          t->year + 2000    // 0
+        , t->month          // 1
+        , t->day            // 2
+        , 0 // weekday      // 3
+        , t->hour           // 4
+        , t->minute         // 5
+        , t->second         // 6
+    };
+    tt[3] = zeller(tt[0], tt[1], tt[2]);
+
+    uint8_t i, j;
+    for (i = 0; i < CNT_N; ++i) {
+        led_matrix[i] = 0;
+        for (j = 0; j < ANODE_N; ++j) {
+            // "loop" over all the bits of this line in led_matrix
+            // LED_MAP[i][j][0] represents the index in tt
+            // LED_MAP[i][j][1] represents the
+            // bit number of the respective value.
+            led_matrix[i] |= 
+                bitset(tt[LED_MAP[i][j][0]]
+                        , LED_MAP[i][j][1]) << j;
+        }
+    }
+}
 
 void init(void)
 {
@@ -54,11 +88,6 @@ void init(void)
     sei();
 }
 
-
-ISR(TIMER0_OVF_vect)
-{
-
-}
 
 int main(void)
 {
