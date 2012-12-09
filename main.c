@@ -30,14 +30,17 @@ void init(void)
 
     // Both PWM channels set to non-inverting Fast PWM
     TCCR1A =  (0<<COM1A0) | (1<<COM1A1) | (0<<COM1B0) | (1<<COM1B1);
-    TCCR1A |= (1<<WGM10)  | (1<<WGM11);
-    TCCR1B =  (1<<WGM11)  | (1<<WGM12);
+    TCCR1A |= (0<<WGM10)  | (1<<WGM11);
+    TCCR1B =  (1<<WGM12)  | (1<<WGM13);
 
     // No prescaler
     TCCR1B |= (1<<CS10)   | (0<<CS11)   | (0<<CS12);
-    
-    OCR1A = 0x3BFF;
-    OCR1B = 0x8FFF;
+
+    // Set frequency
+    ICR1 = PWM_TOP;
+
+    OCR1A = PWM_TOP/2;
+    OCR1B = PWM_TOP/4;
 
 
     /*
@@ -63,6 +66,7 @@ ISR(TIMER0_OVF_vect)
 
 int main(void)
 {
+    init();
     for (;;) {
         _delay_ms(500);
     }

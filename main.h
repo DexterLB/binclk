@@ -1,6 +1,9 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#define F_CPU 7327800ul
+
+
 #include <string.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
@@ -12,7 +15,6 @@
 #include "compat.h"
 
 
-#define F_CPU 7327800ul
 
 #include <util/delay.h>
 

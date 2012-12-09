@@ -18,5 +18,8 @@ const uint8_t CNT[] = {8, 6, 5, 9, 7, 0, 2, 4};
 #define ANODE_PORT      PORTB
 #define ANODE_SHIFT     3
 
+#define PWM_FREQ        480ul
+#define PWM_TOP ((F_CPU/PWM_FREQ) - 1)
+
 
 #endif
