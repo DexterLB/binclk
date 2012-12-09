@@ -1,5 +1,6 @@
 #include "main.h"
 
+uint8_t led_matrix[8];
 
 ISR(TIMER2_OVF_vect)
 {
@@ -14,7 +15,7 @@ ISR(TIMER2_COMP_vect)
 
 ISR(ADC_vect)   //ADC convertion complete interupt
 {
-    uint8_t adcStatus = (uint8_t)(ADC >> 8);
+//    uint8_t adcStatus = (uint8_t)(ADC >> 8);
     
 }
 
@@ -25,6 +26,20 @@ void init(void)
     DDRC = DDRC_STATE;
     DDRD = DDRD_STATE;
     
+    memset(led_matrix, 0, sizeof(led_matrix));
+
+    // Both PWM channels set to non-inverting Fast PWM
+    TCCR1A =  (0<<COM1A0) | (1<<COM1A1) | (0<<COM1B0) | (1<<COM1B1);
+    TCCR1A |= (1<<WGM10)  | (1<<WGM11);
+    TCCR1B =  (1<<WGM11)  | (1<<WGM12);
+
+    // No prescaler
+    TCCR1B |= (1<<CS10)   | (0<<CS11)   | (0<<CS12);
+    
+    OCR1A = 0x3BFF;
+    OCR1B = 0x8FFF;
+
+
     /*
     TCCR2 = 0x05;           // Prescaler /128 (8Mhz/128=62.5kHz)
     TCNT2 = 0x00;

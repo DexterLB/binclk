@@ -1,3 +1,5 @@
+#ifndef BITPORT_H
+#define BITPORT_H
 //Bit operations header
 //Made by geneo
 
@@ -15,3 +17,4 @@
 #define bitsclear(x,y) (((x) & (y)) == 0)
 #define bitval(x,y) (((x)>>(y)) & 1) 
 #define ibitset(x,y) !bitclear((x), (y))
+#endif

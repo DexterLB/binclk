@@ -1,3 +1,5 @@
+#ifndef BIT_OPERATIONS_H
+#define BIT_OPERATIONS_H
 // Bit Field Conversion for PORT Access 
 typedef struct 
 { 
@@ -28,3 +30,5 @@ unsigned bit7:1;
 #define inb (*((volatile BYTE_BITFIELD*)(&PINB))) 
 #define inc (*((volatile BYTE_BITFIELD*)(&PINC))) 
 #define ind (*((volatile BYTE_BITFIELD*)(&PIND))) 
+
+#endif

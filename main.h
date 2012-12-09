@@ -1,15 +1,19 @@
-#define F_CPU 8000000ul
+#ifndef MAIN_H
+#define MAIN_H
 
-#define DDRB_STATE 0xFF
-#define DDRC_STATE 0xCF
-#define DDRD_STATE 0xFF
-
+#include <string.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
-#include <util/delay.h>
 
 
 #include "bit_operations.h"
 #include "BitPort.h"
 #include "pinout.h"
 #include "compat.h"
+
+
+#define F_CPU 7327800ul
+
+#include <util/delay.h>
+
+#endif
