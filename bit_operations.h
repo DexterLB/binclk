@@ -17,4 +17,6 @@
 #define bitsclear(x,y) (((x) & (y)) == 0)
 #define bitval(x,y) (((x)>>(y)) & 1) 
 #define ibitset(x,y) !bitclear((x), (y))
+
+#define togglebit(x,y) if (bitset((x), (y))) clearbit((x), (y)); else setbit((x), (y))
 #endif

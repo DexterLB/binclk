@@ -2,15 +2,9 @@
 
 uint8_t led_matrix[8];
 
-ISR(TIMER2_OVF_vect)
+ISR(TIMER1_OVF_vect)
 {
-
-}
-
-
-ISR(TIMER2_COMP_vect)
-{
-
+    togglebit(PORTB, 3);
 }
 
 ISR(ADC_vect)   //ADC convertion complete interupt
@@ -42,6 +36,8 @@ void init(void)
     OCR1A = PWM_TOP/2;
     OCR1B = PWM_TOP/4;
 
+    TIMSK = (1<<TOIE1);
+
 
     /*
     TCCR2 = 0x05;           // Prescaler /128 (8Mhz/128=62.5kHz)
@@ -56,6 +52,8 @@ void init(void)
     ADMUX  = 0x66;			// 01100110 - Int Ref + Cap; Left justified; ADC6 enable
     ADCSRA = 0x8F;		    // 10001111	- ADC Enable; Interupt enable; SysClc/128        
     */
+
+    sei();
 }
 
 
