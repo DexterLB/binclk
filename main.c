@@ -1,10 +1,22 @@
 #include "main.h"
 
-uint8_t led_matrix[8];
+uint8_t led_matrix[CNT_N] = {
+    0, 1, 2, 3, 4, 5, 6, 7
+};
+uint8_t led_index;
 
 ISR(TIMER1_OVF_vect)
 {
-    togglebit(PORTB, 3);
+    // increment matrix counter
+    if (++led_index >= CNT_N) led_index = 0;
+
+    // set port to desired value
+    CNT_PORT |= CNT[led_index] << CNT_SHIFT;
+    CNT_PORT &= ~CNT_MASK | (CNT[led_index] << CNT_SHIFT);
+
+    ANODE_PORT |= led_matrix[led_index] << ANODE_SHIFT;
+    ANODE_PORT &= ~ANODE_MASK | (led_matrix[led_index] << ANODE_SHIFT);
+
 }
 
 ISR(ADC_vect)   //ADC convertion complete interupt
@@ -20,7 +32,7 @@ void init(void)
     DDRC = DDRC_STATE;
     DDRD = DDRD_STATE;
     
-    memset(led_matrix, 0, sizeof(led_matrix));
+    led_index = 0;
 
     // Both PWM channels set to non-inverting Fast PWM
     TCCR1A =  (0<<COM1A0) | (1<<COM1A1) | (0<<COM1B0) | (1<<COM1B1);
@@ -35,23 +47,9 @@ void init(void)
 
     OCR1A = PWM_TOP/2;
     OCR1B = PWM_TOP/4;
-
+    
+    // Enable Timer1 overflow interrupt
     TIMSK = (1<<TOIE1);
-
-
-    /*
-    TCCR2 = 0x05;           // Prescaler /128 (8Mhz/128=62.5kHz)
-    TCNT2 = 0x00;
-    
-    TCCR0 = BEEP_PRESCALER;
-    TCNT0 = BEEP_COUNTFROM;
-    
-    TIMSK = (0x01<<TOIE2)   // Timer 2 overflow interrupt enable
-          | (0x01<<OCIE2);  // Timer 2 compare match interrupt enable
-
-    ADMUX  = 0x66;			// 01100110 - Int Ref + Cap; Left justified; ADC6 enable
-    ADCSRA = 0x8F;		    // 10001111	- ADC Enable; Interupt enable; SysClc/128        
-    */
 
     sei();
 }

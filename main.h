@@ -14,6 +14,8 @@
 #include "pinout.h"
 #include "compat.h"
 
+#include "ds1302/ds1302.h"
+
 
 
 #include <util/delay.h>
