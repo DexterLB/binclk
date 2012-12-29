@@ -17,13 +17,13 @@ const uint8_t CNT[CNT_N] = {
       0x04, 0x03, 0x0A, 0x0C
     , 0x0B, 0x00, 0x01, 0x02
 };
-#define CNT_MASK        (B8(1111)<<CNT_SHIFT)
+#define CNT_MASK        (((2^CNT_N) - 1)<<CNT_SHIFT)
 
 // Anode axis
 #define ANODE_N         3
 #define ANODE_PORT      PORTB
 #define ANODE_SHIFT     3
-#define ANODE_MASK      (B8(111)<<ANODE_SHIFT)
+#define ANODE_MASK      (((2^ANODE_N) - 1)<<ANODE_SHIFT)
 
 /*
  * 0 - year
