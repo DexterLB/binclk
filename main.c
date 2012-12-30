@@ -5,7 +5,8 @@ uint8_t led_matrix[CNT_N] = {
 };
 uint8_t led_index;
 
-ISR(TIMER1_OVF_vect)
+void update_display()
+// A single iteration for the dynamic LED display
 {
     // increment matrix counter
     if (++led_index >= CNT_N) led_index = 0;
@@ -16,7 +17,11 @@ ISR(TIMER1_OVF_vect)
 
     ANODE_PORT |= led_matrix[led_index] << ANODE_SHIFT;
     ANODE_PORT &= ~ANODE_MASK | (led_matrix[led_index] << ANODE_SHIFT);
+}
 
+ISR(TIMER1_OVF_vect)
+{
+    update_display();
 }
 
 ISR(ADC_vect)   //ADC convertion complete interupt
@@ -79,7 +84,7 @@ void init(void)
     // Set frequency
     ICR1 = PWM_TOP;
 
-    OCR1A = PWM_TOP/2;
+    OCR1A = PWM_TOP/2;  // set brightness. fixme
     OCR1B = PWM_TOP/4;
     
     // Enable Timer1 overflow interrupt
