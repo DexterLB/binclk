@@ -1,9 +1,7 @@
 #include "main.h"
 
-uint8_t led_matrix[CNT_N] = {
-    0, 1, 2, 3, 4, 5, 6, 7
-};
-uint8_t led_index;
+uint8_t led_matrix[CNT_N] = {};
+uint8_t led_index = 0;
 
 void update_display()
 // A single iteration for the dynamic LED display
