@@ -28,6 +28,29 @@ ISR(ADC_vect)   //ADC convertion complete interupt
     
 }
 
+void process_usart_line(char *str)
+{
+    usart_write_string(str);
+}
+
+ISR(USART_RXC_vect)
+{
+    static char buf[40] = {};
+    static uint8_t index = 0;
+    char c;
+    
+    c = usart_read_byte();
+
+    if ((c == '\0') || (c == '\n') || (c == '\r') || (index >= sizeof buf - 2)) {
+        buf[index] = '\0';
+        process_usart_line(buf);
+        index = 0;
+        return;
+    }
+
+    buf[index++] = c;
+}
+
 uint8_t zeller(uint8_t year, uint8_t month, uint8_t day)
 // calculates day of the week
 {
@@ -90,6 +113,8 @@ void init(void)
     DDRD = DDRD_STATE;
  
     init_display();
+    usart_init();
+    usart_enable_interrupt();
 
     sei();
 }
@@ -98,6 +123,7 @@ void init(void)
 int main(void)
 {
     init();
+    usart_write_string("foo\n\nbar\nbaz");
     for (;;) {
         _delay_ms(500);
     }

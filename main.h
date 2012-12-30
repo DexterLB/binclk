@@ -1,7 +1,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define F_CPU 7327800ul
+
+#include "def.h"
 
 
 #include <avr/interrupt.h>
@@ -12,6 +13,8 @@
 #include "BitPort.h"
 #include "pinout.h"
 #include "compat.h"
+
+#include "usartprimitive.h"
 
 #include "ds1302/ds1302.h"
 

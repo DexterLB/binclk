@@ -1,7 +1,8 @@
 #ifndef DS1302_SETTINGS_H
 #define DS1302_SETTINGS_H
 
-#define F_CPU 7327800ul
+#include "../def.h"
+
 
 #define USE_ADELAY_LIBRARY    0           // Set to 1 to use my ADELAY library, 0 to use internal delay functions
 
