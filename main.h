@@ -16,7 +16,9 @@
 
 #include "usartprimitive.h"
 
-#include "ds1302/ds1302.h"
+#include "ds1302.h"
+
+#include "datetimeconvert.h"
 
 
 

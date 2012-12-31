@@ -2,13 +2,7 @@
 #define DS1302_H
 
 #include "ds1302_settings.h"
-
-struct ymdhms_t
-{
-    uint8_t year,month,day,weekday,hour,minute,second;
-        // year is 0-99 which represents 2000-2099
-        // weekday is unused.
-};
+#include "datetimeconvert.h"
 
 unsigned char ds1302_getbyte(unsigned char AAddress);                  // these low level functions are not mentioned in the documentation
 void ds1302_setbyte(unsigned char AAddress, unsigned char AValue);     // but allow you to read or write to the ds1302 using the datasheet

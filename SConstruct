@@ -28,7 +28,7 @@ programmer_mcu = 'm8'
 # source files
 # .c, .cpp or .S (NOT .s !!! for asm)
 # example: ['main.c', 'foo.c', 'lowlevel.S']
-src = ['main.c', 'ds1302/ds1302.c', 'usartprimitive.c']
+src = ['main.c', 'ds1302.c', 'usartprimitive.c', 'datetimeconvert.c']
 
 # additional includes (e.g. -I/path/to/mydir)
 inc = []
