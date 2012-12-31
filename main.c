@@ -51,20 +51,13 @@ ISR(USART_RXC_vect)
     buf[index++] = c;
 }
 
-uint8_t zeller(uint8_t year, uint8_t month, uint8_t day)
-// calculates day of the week
-{
-    return 4;   // chosen by dice roll
-}
-
-
 void display_time(struct ymdhms_t *t)
 {
     uint8_t tt[] = {
-          t->year + 2000    // 0
+          t->year           // 0
         , t->month          // 1
         , t->day            // 2
-        , 0 // weekday      // 3
+        , t->weekday        // 3
         , t->hour           // 4
         , t->minute         // 5
         , t->second         // 6
