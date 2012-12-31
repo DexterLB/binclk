@@ -6,7 +6,6 @@
 struct ymdhms_t
 {
     uint8_t year,month,day,weekday,hour,minute,second;
-    uint16_t yearday;
         // year is 0-99 which represents 2000-2099
         // weekday is unused.
 };
