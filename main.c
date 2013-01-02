@@ -54,18 +54,10 @@ ISR(USART_RXC_vect)
 
 
 void display_time(struct ymdhms_t *t)
+// populates led_matrix with data from ymdhms
 {
-    /*
-    uint8_t tt[] = {
-          t->year           // 0
-        , t->month          // 1
-        , t->day            // 2
-        , t->weekday        // 3
-        , t->hour           // 4
-        , t->minute         // 5
-        , t->second         // 6
-    };
-    */
+    // handy trick to make things very simple
+    // refer to comments @ the definition of LED_MAP
     uint8_t *tt = (uint8_t*) t;
 
     uint8_t i, j;
