@@ -3,6 +3,12 @@
 uint8_t led_matrix[CNT_N] = {};
 uint8_t led_index = 0;
 
+inline void soft_reset()
+{
+    wdt_enable(WDTO_30MS);
+    for(;;);
+}
+
 void update_display()
 // A single iteration for the dynamic LED display
 {
@@ -30,7 +36,27 @@ ISR(ADC_vect)   //ADC convertion complete interupt
 
 void process_usart_line(char *str)
 {
-    usart_write_string(str);
+    char s[40] = "";
+    struct ymdhms_t t;
+    struct ymdhms_t t2;
+    if (strcmp("human", str) == 0) {
+        ds1302_get_time(&t);
+        time_t ct = time_t_from_ymdhms(&t);
+        sprintf(s, "humantime : %lu , ", (uint32_t)ct);
+        
+        usart_write_string(s, false);
+
+        ymdhms_from_time_t(&t2, ct);
+        sprintf(s, "%u-%u-%u'%u %u:%u:%u", t2.year, t2.month, t2.day, t2.weekday, t2.hour, t2.minute, t2.second);
+        usart_write_string(s, true);
+        return;
+    }
+    if (strcmp("reset", str) == 0) {
+        usart_write_string("bye", true);
+        soft_reset();
+        return;
+    }
+    usart_write_string(str, true);
 }
 
 ISR(USART_RXC_vect)
@@ -69,13 +95,13 @@ void display_time(struct ymdhms_t *t)
             // LED_MAP[i][j][1] represents the
             // bit number of the respective value.
             led_matrix[i] |= 
-                bitset(tt[LED_MAP[i][j][0]]
+                bitval(tt[LED_MAP[i][j][0]]
                         , LED_MAP[i][j][1]) << j;
         }
     }
 }
 
-static inline void init_display(void)
+static inline void display_init(void)
 {
     // Both PWM channels set to non-inverting Fast PWM
     TCCR1A =  (0<<COM1A0) | (1<<COM1A1) | (0<<COM1B0) | (1<<COM1B1);
@@ -89,7 +115,7 @@ static inline void init_display(void)
     ICR1 = PWM_TOP;
 
     OCR1A = PWM_TOP/2;  // set brightness. fixme
-    OCR1B = PWM_TOP/4;
+    OCR1B = PWM_TOP/8;
     
     // Enable Timer1 overflow interrupt
     TIMSK = (1<<TOIE1);
@@ -101,11 +127,18 @@ void init(void)
     DDRC = DDRC_STATE;
     DDRD = DDRD_STATE;
  
-    init_display();
+    display_init();
     usart_init();
     usart_enable_interrupt();
 
     ds1302_init();
+
+    struct ymdhms_t initial;
+    if (!ds1302_get_time(&initial)) {
+        // set time to Epoch if this is a first run
+        ymdhms_from_time_t(&initial, 0);
+        ds1302_set_time(&initial);
+    }
 
     sei();
 }
@@ -114,23 +147,25 @@ void init(void)
 int main(void)
 {
     init();
-    usart_write_string("foo\n");
+    usart_write_string("foo", true);
     struct ymdhms_t t;
     struct ymdhms_t t2;
-    char str[40] = "";
-    ymdhms_from_time_t(&t, 1356956553);
-    ds1302_set_time(&t);
+//    char str[40] = "";
+
     for (;;) {
-        _delay_ms(500);
+        _delay_ms(100);
         ds1302_get_time(&t);
         time_t ct = time_t_from_ymdhms(&t);
-        sprintf(str, "current time_t, : %lu , ", (uint32_t)ct);
+//        sprintf(str, "current time_t, : %lu , ", (uint32_t)ct);
         
-        usart_write_string(str);
+//        usart_write_string(str);
 
         ymdhms_from_time_t(&t2, ct);
-        sprintf(str, "%u-%u-%u'%u %u:%u:%u\n", t2.year, t2.month, t2.day, t2.weekday, t2.hour, t2.minute, t2.second);
-        usart_write_string(str);
+//        sprintf(str, "%u-%u-%u'%u %u:%u:%u\n", t2.year, t2.month, t2.day, t2.weekday, t2.hour, t2.minute, t2.second);
+//        usart_write_string(str);
+
+
+        display_time(&t2);
     }
     return 0;
 }   // main()

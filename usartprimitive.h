@@ -13,11 +13,15 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifndef bool
+    #define bool char
+#endif
+
 void usart_init(void);
 void usart_enable_interrupt(void);
 void usart_write_byte(char c);
 char usart_read_byte(void);
 void usart_read_line(char* str, const uint16_t max_size);
-void usart_write_string(char* str);
+void usart_write_string(char* str, bool line);
 
 #endif

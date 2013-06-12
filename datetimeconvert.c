@@ -104,21 +104,6 @@ struct ymdhms_t* ymdhms_from_time_t(struct ymdhms_t* t, time_t sec)
         }
     }
 
-    /*
-    // Fill in C's "struct tm"
-    memset(pTm, 0, sizeof(*pTm));
-    pTm->tm_sec = sec;                    // [0,59]
-    pTm->tm_min = min;                    // [0,59]
-    pTm->tm_hour = hour;                // [0,23]
-    pTm->tm_mday = mday;                // [1,31]    (day of month)
-    pTm->tm_mon = month - 1;        // [0,11]    (month)
-    pTm->tm_year = year - 1900; // 70+         (year since 1900)
-    pTm->tm_wday = wday;                // [0,6]     (day since Sunday AKA day of week)
-    pTm->tm_yday = yday;                // [0,365] (day since January 1st AKA day of year)
-    pTm->tm_isdst = -1;                 // daylight saving time flag
-    return pTm;
-    */
-
     // Contributed by Alexey Frunze
     // http://stackoverflow.com/a/11197532/968261
 

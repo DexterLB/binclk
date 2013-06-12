@@ -72,12 +72,12 @@ cnoremap $c e eCurrentFileDir("e")
 cnoremap $j e ./
 cnoremap $d e ~/Desktop/
 cnoremap $h e ~/
+nmap ½ $
 map  l
 map  h
 map  k
 map  j
 vmap ½ $
-nmap ½ $
 omap ½ $
 vmap ë :m'<-2`>my`<mzgv`yo`z
 vmap ê :m'>+`<my`>mzgv`yo`z
@@ -134,19 +134,19 @@ set window=56
 let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 let v:this_session=expand("<sfile>:p")
 silent only
-cd ~/manwe/stg0/human/Documents/Electronics/Projects/binclk/soft/binclk
+cd /ewok/stuff/cool/binclk/soft/binclk
 if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +0 main.c
-badd +0 main.h
-badd +0 pinout.h
-badd +0 compat.h
-badd +0 bit_operations.h
-badd +0 BitPort.h
+badd +1 main.c
+badd +1 main.h
+badd +1 pinout.h
+badd +1 compat.h
+badd +1 bit_operations.h
+badd +1 BitPort.h
 args main.c main.h pinout.h compat.h bit_operations.h BitPort.h
-set lines=57 columns=99
+set lines=57 columns=105
 winpos 0 20
 edit main.c
 set splitbelow splitright

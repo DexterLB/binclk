@@ -55,10 +55,13 @@ void usart_read_line(char* str, const uint16_t max_size)
     *(++iter) = '\0';
 }
 
-void usart_write_string(char* str)
+void usart_write_string(char* str, bool line)
 {
     char* iter;
     for (iter = str; iter < str + strlen(str); ++iter) {
         usart_write_byte(*iter);
+    }
+    if (line) {
+        usart_write_byte('\n');
     }
 }

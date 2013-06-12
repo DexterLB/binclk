@@ -7,6 +7,7 @@
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <avr/wdt.h>
 
 
 #include "bit_operations.h"
