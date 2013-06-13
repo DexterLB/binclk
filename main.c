@@ -29,6 +29,24 @@ void update_display()
     ANODE_PORT &= ~ANODE_MASK | (led_matrix[led_index] << ANODE_SHIFT);
 }
 
+void permawrite(void)
+{
+    uint8_t *buf;
+    uint8_t index;
+    buf = (uint8_t*)(&permadata);
+    for (index = 0; index < sizeof(permadata); ++index)
+        ds1302_set_ram(index, *buf++);
+}
+
+void permaread(void)
+{
+    uint8_t *buf;
+    uint8_t index;
+    buf = (uint8_t*)(&permadata);
+    for (index = 0; index < sizeof(permadata); ++index)
+        *buf++ = ds1302_get_ram(index);
+}
+
 ISR(TIMER1_OVF_vect)
 {
     update_display();
@@ -203,24 +221,6 @@ static inline void display_init(void)
     
     // Enable Timer1 overflow interrupt
     TIMSK = (1<<TOIE1);
-}
-
-void permawrite(void)
-{
-    uint8_t *buf;
-    uint8_t index;
-    buf = &permadata;
-    for (index = 0; index < sizeof(permadata); ++index)
-        ds1302_set_ram(index, *buf++);
-}
-
-void permaread(void)
-{
-    uint8_t *buf;
-    uint8_t index;
-    buf = &permadata;
-    for (index = 0; index < sizeof(permadata); ++index)
-        *buf++ = ds1302_get_ram(index);
 }
 
 void init(void)
