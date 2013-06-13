@@ -71,7 +71,7 @@ void itoan(uint64_t i, char *str) {
     }
 
     while (j != 0) {
-        str[index] = '0' + (j % 10);
+        str[index - 1] = '0' + (j % 10);
         j /= 10;
         --index;
     }
