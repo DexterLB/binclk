@@ -3,6 +3,12 @@
 uint8_t led_matrix[CNT_N] = {};
 uint8_t led_index = 0;
 
+struct {
+    time_t lastset;
+    time_t driftbase;
+    int64_t drift;
+} permadata;
+
 inline void soft_reset()
 {
     wdt_enable(WDTO_30MS);
@@ -34,8 +40,86 @@ ISR(ADC_vect)   //ADC convertion complete interupt
     
 }
 
+void itoan(uint64_t i, char *str) {
+    if (i == 0) {
+        str[0] = '0';
+        return;
+    }
+    uint8_t index = 0;
+    uint64_t j = i;
+    while (i != 0) {
+        i /= 10;
+        ++index;
+    }
+
+    while (j != 0) {
+        str[index] = '0' + (j % 10);
+        j /= 10;
+        --index;
+    }
+}
+
+bool atoin(uint64_t *i, char *str) {
+    *i = 0;
+    uint8_t digit;
+    while (str[0] != '\0') {
+        *i *= 10;
+        digit = str[0] - '0';
+        if (digit > 9)
+            return false;
+        *i += digit;
+        ++str;
+    }
+    return true;
+}
+
+bool process_input_string(char *str)
+{
+    if (strlen(str) < 2) {
+        return false;
+    }
+
+    uint64_t *ptr;
+    switch(str[1]) {
+        case 'l':
+            ptr = (uint64_t*)(&(permadata.lastset));
+            break;
+        case 'b':
+            ptr = (uint64_t*)(&(permadata.driftbase));
+            break;
+        case 'd':
+            ptr = (uint64_t*)(&(permadata.drift));
+            break;
+        default:
+            return false;
+    }
+
+    char num_str[12] = "";
+    char* num_ptr;
+    switch(str[0]) {
+        case 'r':
+            itoan(*ptr, num_str);
+            usart_write_string(num_str, true);
+            return true;
+        case 'w':
+            num_ptr = &(str[2]);
+            if (!atoin(ptr, num_ptr))
+                return false;
+            usart_write_string("ok", true);
+            permawrite();
+            return true;
+        default:
+            return false;
+    }
+    return false;
+}
+
 void process_usart_line(char *str)
 {
+    if (!process_input_string(str)) {
+        usart_write_string("fail", true);
+    }
+    return;
     char s[40] = "";
     struct ymdhms_t t;
     struct ymdhms_t t2;
@@ -121,6 +205,24 @@ static inline void display_init(void)
     TIMSK = (1<<TOIE1);
 }
 
+void permawrite(void)
+{
+    uint8_t *buf;
+    uint8_t index;
+    buf = &permadata;
+    for (index = 0; index < sizeof(permadata); ++index)
+        ds1302_set_ram(index, *buf++);
+}
+
+void permaread(void)
+{
+    uint8_t *buf;
+    uint8_t index;
+    buf = &permadata;
+    for (index = 0; index < sizeof(permadata); ++index)
+        *buf++ = ds1302_get_ram(index);
+}
+
 void init(void)
 {
     DDRB = DDRB_STATE;
@@ -140,6 +242,8 @@ void init(void)
         ds1302_set_time(&initial);
     }
 
+    permaread();
+
     sei();
 }
 
@@ -147,23 +251,16 @@ void init(void)
 int main(void)
 {
     init();
-    usart_write_string("foo", true);
+    usart_write_string("42\n", true);
     struct ymdhms_t t;
     struct ymdhms_t t2;
-//    char str[40] = "";
 
     for (;;) {
         _delay_ms(100);
         ds1302_get_time(&t);
         time_t ct = time_t_from_ymdhms(&t);
-//        sprintf(str, "current time_t, : %lu , ", (uint32_t)ct);
-        
-//        usart_write_string(str);
 
         ymdhms_from_time_t(&t2, ct);
-//        sprintf(str, "%u-%u-%u'%u %u:%u:%u\n", t2.year, t2.month, t2.day, t2.weekday, t2.hour, t2.minute, t2.second);
-//        usart_write_string(str);
-
 
         display_time(&t2);
     }

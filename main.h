@@ -9,6 +9,8 @@
 #include <avr/io.h>
 #include <avr/wdt.h>
 
+#include <stdlib.h>
+
 
 #include "bit_operations.h"
 #include "BitPort.h"
