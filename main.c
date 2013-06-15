@@ -15,6 +15,28 @@ inline void soft_reset()
     for(;;);
 }
 
+void set_time(time_t time)
+{
+    struct ymdhms_t t;
+    ymdhms_from_time_t(&t, time);
+    ds1302_set_time(&t);
+}
+
+time_t get_time()
+{
+    struct ymdhms_t t;
+    ds1302_get_time(&t);
+    return time_t_from_ymdhms(&t);
+}
+
+time_t process_time(time_t time)
+{
+    // drift compensation
+    if (permadata.drift)
+        time += (time - permadata.driftbase) / permadata.drift;
+    return time;
+}
+
 void update_display()
 // A single iteration for the dynamic LED display
 {
@@ -98,6 +120,8 @@ bool process_input_string(char *str)
     }
 
     uint64_t *ptr;
+    time_t time = 0;
+
     switch(str[1]) {
         case 'l':
             ptr = (uint64_t*)(&(permadata.lastset));
@@ -108,6 +132,9 @@ bool process_input_string(char *str)
         case 'd':
             ptr = (uint64_t*)(&(permadata.drift));
             break;
+        case 't':
+            ptr = (uint64_t*)(&time);
+            break;
         default:
             return false;
     }
@@ -116,6 +143,12 @@ bool process_input_string(char *str)
     char* num_ptr;
     switch(str[0]) {
         case 'r':
+            if (str[1] == 't') {
+                time = get_time();
+                if (str[2] == '?')
+                    time = process_time(time);
+            }
+
             itoan(*ptr, num_str);
             usart_write_string(num_str, true);
             return true;
@@ -124,7 +157,12 @@ bool process_input_string(char *str)
             if (!atoin(ptr, num_ptr))
                 return false;
             usart_write_string("ok", true);
-            permawrite();
+
+            if (str[1] == 't')
+                set_time(time);
+            else
+                permawrite();
+
             return true;
         default:
             return false;
@@ -137,28 +175,6 @@ void process_usart_line(char *str)
     if (!process_input_string(str)) {
         usart_write_string("fail", true);
     }
-    return;
-    char s[40] = "";
-    struct ymdhms_t t;
-    struct ymdhms_t t2;
-    if (strcmp("human", str) == 0) {
-        ds1302_get_time(&t);
-        time_t ct = time_t_from_ymdhms(&t);
-        sprintf(s, "humantime : %lu , ", (uint32_t)ct);
-        
-        usart_write_string(s, false);
-
-        ymdhms_from_time_t(&t2, ct);
-        sprintf(s, "%u-%u-%u'%u %u:%u:%u", t2.year, t2.month, t2.day, t2.weekday, t2.hour, t2.minute, t2.second);
-        usart_write_string(s, true);
-        return;
-    }
-    if (strcmp("reset", str) == 0) {
-        usart_write_string("bye", true);
-        soft_reset();
-        return;
-    }
-    usart_write_string(str, true);
 }
 
 ISR(USART_RXC_vect)
@@ -181,12 +197,15 @@ ISR(USART_RXC_vect)
 
 
 
-void display_time(struct ymdhms_t *t)
+void display_time(time_t time)
 // populates led_matrix with data from ymdhms
 {
+    struct ymdhms_t t;
+    ymdhms_from_time_t(&t, time);
+
     // handy trick to make things very simple
     // refer to comments @ the definition of LED_MAP
-    uint8_t *tt = (uint8_t*) t;
+    uint8_t *tt = (uint8_t*)(&t);
 
     uint8_t i, j;
     for (i = 0; i < CNT_N; ++i) {
@@ -247,22 +266,22 @@ void init(void)
     sei();
 }
 
+void time_train()
+// the entire pipeline from ds1302 to the display
+{
+    time_t time = get_time();
+    time = process_time(time);
+    display_time(time);
+}
 
 int main(void)
 {
     init();
     usart_write_string("42\n", true);
-    struct ymdhms_t t;
-    struct ymdhms_t t2;
 
     for (;;) {
         _delay_ms(100);
-        ds1302_get_time(&t);
-        time_t ct = time_t_from_ymdhms(&t);
-
-        ymdhms_from_time_t(&t2, ct);
-
-        display_time(&t2);
+        time_train();
     }
     return 0;
-}   // main()
+}
