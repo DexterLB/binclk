@@ -74,12 +74,6 @@ ISR(TIMER1_OVF_vect)
     update_display();
 }
 
-ISR(ADC_vect)   //ADC convertion complete interupt
-{
-//    uint8_t adcStatus = (uint8_t)(ADC >> 8);
-    
-}
-
 void itoan(uint64_t i, char *str) {
     if (i == 0) {
         str[0] = '0';
@@ -242,7 +236,16 @@ static inline void display_init(void)
     TIMSK = (1<<TOIE1);
 }
 
-void init(void)
+static inline void loop_init(void)
+{
+    // Prescaler /1024
+    TCCR0 = (1<<CS00) | (0<<CS01) | (1<<CS02);
+    
+    // Enable Timer0 overflow interrupt
+    TIMSK = (1<<TOIE0);
+}
+
+static inline void init(void)
 {
     DDRB = DDRB_STATE;
     DDRC = DDRC_STATE;
@@ -253,6 +256,8 @@ void init(void)
     usart_enable_interrupt();
 
     ds1302_init();
+
+    loop_init();
 
     struct ymdhms_t initial;
     if (!ds1302_get_time(&initial)) {
@@ -274,14 +279,30 @@ void time_train()
     display_time(time);
 }
 
+ISR(TIMER0_OVF_vect)
+{
+    static uint8_t loop_counter = 0;
+    if (loop_counter < UPDATE_PRESCALER) {
+        ++loop_counter;
+        return;
+    }
+    loop_counter = 0;
+
+    time_train();
+}
+
+ISR(ADC_vect)   //ADC convertion complete interupt
+{
+//    uint8_t adcStatus = (uint8_t)(ADC >> 8);
+    
+}
+
 int main(void)
 {
     init();
     usart_write_string("42\n", true);
 
     for (;;) {
-        _delay_ms(100);
-        time_train();
     }
     return 0;
 }
