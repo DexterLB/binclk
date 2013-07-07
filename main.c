@@ -109,6 +109,11 @@ bool atoin(uint64_t *i, char *str) {
 
 bool process_input_string(char *str)
 {
+    if (str[0] == 'q') {
+        soft_reset();
+        return true;
+    }
+
     if (strlen(str) < 2) {
         return false;
     }
