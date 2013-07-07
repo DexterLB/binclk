@@ -234,11 +234,11 @@ static inline void display_init(void)
     // Set frequency
     ICR1 = PWM_TOP;
 
-    OCR1A = PWM_TOP/2;  // set brightness. fixme
-    OCR1B = PWM_TOP/8;
+    OCR1A = PWM_TOP/8;  // set brightness. fixme
+    OCR1B = PWM_TOP/512;
     
     // Enable Timer1 overflow interrupt
-    TIMSK = (1<<TOIE1);
+    TIMSK |= (1<<TOIE1);
 }
 
 static inline void loop_init(void)
@@ -247,7 +247,7 @@ static inline void loop_init(void)
     TCCR0 = (1<<CS00) | (0<<CS01) | (1<<CS02);
     
     // Enable Timer0 overflow interrupt
-    TIMSK = (1<<TOIE0);
+    TIMSK |= (1<<TOIE0);
 }
 
 static inline void init(void)
@@ -255,6 +255,8 @@ static inline void init(void)
     DDRB = DDRB_STATE;
     DDRC = DDRC_STATE;
     DDRD = DDRD_STATE;
+
+    TIMSK = 0;
  
     display_init();
     usart_init();
@@ -262,7 +264,7 @@ static inline void init(void)
 
     ds1302_init();
 
-    loop_init();
+//    loop_init();
 
     struct ymdhms_t initial;
     if (!ds1302_get_time(&initial)) {
@@ -308,6 +310,8 @@ int main(void)
     usart_write_string("42\n", true);
 
     for (;;) {
+        _delay_ms(100);
+        time_train();
     }
     return 0;
 }

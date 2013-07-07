@@ -112,8 +112,8 @@ struct ymdhms_t* ymdhms_from_time_t(struct ymdhms_t* t, time_t sec)
     t->hour    = hour;
     t->day     = mday;
     t->month   = month;
-    t->year    = year - 2000;    // since 2000
-    t->weekday = wday;
+    t->year    = year - 2000;       // since 2000
+    t->weekday = wday ? wday : 7;   // fix sunday to be the last day
     return t;
 }
 

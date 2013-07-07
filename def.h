@@ -8,6 +8,6 @@
 #define BAUDRATE 19200
 
 // Clock refresh interval (multiple of 35ms)
-#define UPDATE_PRESCALER 10
+#define UPDATE_PRESCALER 3
 
 #endif
