@@ -40,6 +40,9 @@ time_t process_time(time_t time)
 void update_display()
 // A single iteration for the dynamic LED display
 {
+    // turn off LEDs before we do anything
+    ANODE_PORT &= ~ANODE_MASK;
+
     // increment matrix counter
     if (++led_index >= CNT_N) led_index = 0;
 
@@ -111,7 +114,7 @@ bool process_input_string(char *str)
 {
     if (str[0] == 'q') {
         soft_reset();
-        return true;
+        return true;    // *evil face*
     }
 
     if (strlen(str) < 2) {
@@ -181,7 +184,7 @@ ISR(USART_RXC_vect)
     static char buf[40] = {};
     static uint8_t index = 0;
     char c;
-    
+
     c = usart_read_byte();
 
     if ((c == '\0') || (c == '\n') || (c == '\r') || (index >= sizeof buf - 2)) {
@@ -214,7 +217,7 @@ void display_time(time_t time)
             // LED_MAP[i][j][0] represents the index in tt
             // LED_MAP[i][j][1] represents the
             // bit number of the respective value.
-            led_matrix[i] |= 
+            led_matrix[i] |=
                 bitval(tt[LED_MAP[i][j][0]]
                         , LED_MAP[i][j][1]) << j;
         }
@@ -236,7 +239,7 @@ static inline void display_init(void)
 
     OCR1A = PWM_TOP/8;  // set brightness. fixme
     OCR1B = PWM_TOP/512;
-    
+
     // Enable Timer1 overflow interrupt
     TIMSK |= (1<<TOIE1);
 }
@@ -245,7 +248,7 @@ static inline void loop_init(void)
 {
     // Prescaler /1024
     TCCR0 = (1<<CS00) | (0<<CS01) | (1<<CS02);
-    
+
     // Enable Timer0 overflow interrupt
     TIMSK |= (1<<TOIE0);
 }
@@ -257,7 +260,7 @@ static inline void init(void)
     DDRD = DDRD_STATE;
 
     TIMSK = 0;
- 
+
     display_init();
     usart_init();
     usart_enable_interrupt();
@@ -301,7 +304,7 @@ ISR(TIMER0_OVF_vect)
 ISR(ADC_vect)   //ADC convertion complete interupt
 {
 //    uint8_t adcStatus = (uint8_t)(ADC >> 8);
-    
+
 }
 
 int main(void)
