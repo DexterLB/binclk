@@ -200,6 +200,8 @@ ISR(USART_RXC_vect)
         itoan((uint64_t)OCR1A, foo);
         usart_write_string(foo, false);
 
+        memset(foo, 0, sizeof foo);
+
         usart_write_string(", OCR1B: ", false);
         itoan((uint64_t)OCR1B, foo);
         usart_write_string(foo, false);
