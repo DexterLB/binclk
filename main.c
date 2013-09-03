@@ -1,4 +1,5 @@
 #include "main.h"
+#define BRCAL
 
 uint8_t led_matrix[CNT_N] = {};
 uint8_t led_index = 0;
@@ -186,6 +187,27 @@ ISR(USART_RXC_vect)
     char c;
 
     c = usart_read_byte();
+
+#ifdef BRCAL
+    if (c == 'u' && OCR1A < PWM_TOP) { ++OCR1A; return; }
+    if (c == 'j' && OCR1A > 0)       { --OCR1A; return; }
+    if (c == 'i' && OCR1B < PWM_TOP) { ++OCR1B; return; }
+    if (c == 'k' && OCR1B > 0)       { --OCR1B; return; }
+    if (c == 'o') {
+        char foo[12] = "";
+
+        usart_write_string("OCR1A: ", false);
+        itoan((uint64_t)OCR1A, foo);
+        usart_write_string(foo, false);
+
+        usart_write_string(", OCR1B: ", false);
+        itoan((uint64_t)OCR1B, foo);
+        usart_write_string(foo, false);
+
+        usart_write_string("", true);
+        return;
+    }
+#endif
 
     if ((c == '\0') || (c == '\n') || (c == '\r') || (index >= sizeof buf - 2)) {
         buf[index] = '\0';
