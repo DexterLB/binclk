@@ -5,18 +5,21 @@ uint8_t led_matrix[CNT_N] = {};
 uint8_t led_index = 0;
 
 struct {
+    // data stored in the timechip's RAM
     time_t lastset;
     time_t driftbase;
     int64_t drift;
 } permadata;
 
 inline void soft_reset()
+// soft reset of MCU
 {
     wdt_enable(WDTO_30MS);
     for(;;);
 }
 
 void set_time(time_t time)
+// set time to chip
 {
     struct ymdhms_t t;
     ymdhms_from_time_t(&t, time);
@@ -24,13 +27,15 @@ void set_time(time_t time)
 }
 
 time_t get_time()
-{
+// get time from chip
+{   
     struct ymdhms_t t;
     ds1302_get_time(&t);
     return time_t_from_ymdhms(&t);
 }
 
 time_t process_time(time_t time)
+// operations made to time each time it's read
 {
     // drift compensation
     if (permadata.drift)
@@ -56,6 +61,7 @@ void update_display()
 }
 
 void permawrite(void)
+// write permadata to timechip's RAM
 {
     uint8_t *buf;
     uint8_t index;
@@ -65,6 +71,7 @@ void permawrite(void)
 }
 
 void permaread(void)
+// read permadata from timechip's RAM
 {
     uint8_t *buf;
     uint8_t index;
@@ -74,11 +81,15 @@ void permaread(void)
 }
 
 ISR(TIMER1_OVF_vect)
+// TIMER1 interrupt vector. This is the same timer that does the LED PWM,
+// so this function is executed in sync with the 0->1 PWM front
 {
     update_display();
 }
 
-void itoan(uint64_t i, char *str) {
+void itoan(uint64_t i, char *str)
+// convert uint64_t to string (decimal)
+{
     if (i == 0) {
         str[0] = '0';
         return;
@@ -97,7 +108,9 @@ void itoan(uint64_t i, char *str) {
     }
 }
 
-bool atoin(uint64_t *i, char *str) {
+bool atoin(uint64_t *i, char *str)
+// convert string (decimal) to uint64_t
+{
     *i = 0;
     uint8_t digit;
     while (str[0] != '\0') {
@@ -111,8 +124,35 @@ bool atoin(uint64_t *i, char *str) {
     return true;
 }
 
-bool process_input_string(char *str)
+bool process_input_command(char *str)
+// interpret simple commands
 {
+    /*
+     * 'q': reset
+     * 'w<var><value>': write value
+     * 'r<var>': read value
+     *
+     * where <var> can be:
+     *      't': the current time_t (seconds since Epoch)
+     *      'l': the time_t when the clock was last set (just storage, not used)
+     *      'b': the base time_t since which to calculate drift. If drift is
+     *           calculated when the clock was last set, this would be equal
+     *           to 'l'. Essentially the moment in time when the clock is
+     *           considered to have been accurate.
+     *      'd': the drift value. Essentially the number of seconds that pass
+     *           between each time the clock adds 1 second due to drift;
+     *           can also be negative (the clock lags behind) or 0 (no drift)
+     *
+     * <value> is a 64-bit unsigned integer. To simplify code signed values
+     * (aka in the case of 'd') are actually int64_t cast to uint64_t, so when
+     * interacting with them the interfaceing program must perform the cast
+     * on its end.
+     *
+     * In the case of 'rt', a question mark might be added to read the value
+     * after performing post-processing (like drift compensation): 'rt?'
+     *
+     */
+
     if (str[0] == 'q') {
         soft_reset();
         return true;    // *evil face*
@@ -174,13 +214,15 @@ bool process_input_string(char *str)
 }
 
 void process_usart_line(char *str)
+// process line from USART (called upon receiving \n or buffer overflow)
 {
-    if (!process_input_string(str)) {
+    if (!process_input_command(str)) {
         usart_write_string("fail", true);
     }
 }
 
 ISR(USART_RXC_vect)
+// USART character received interrupt
 {
     static char buf[40] = {};
     static uint8_t index = 0;
@@ -208,15 +250,15 @@ ISR(USART_RXC_vect)
         case 'o':
 
             usart_write_string("OCR1A: ", false);
-            char foo[12] = "";              // empty string to store value
-            itoan((uint64_t)OCR1A, foo);    // convert value to string
-            usart_write_string(foo, false);
+            char num_str[12] = "";              // empty string to store value
+            itoan((uint64_t)OCR1A, num_str);    // convert value to string
+            usart_write_string(num_str, false);
 
 
             usart_write_string(", OCR1B: ", false);
-            memset(foo, 0, sizeof foo);     // set the string to empty again
-            itoan((uint64_t)OCR1B, foo);    // convert value to string
-            usart_write_string(foo, false);
+            memset(num_str, 0, sizeof num_str);     // set the string to empty again
+            itoan((uint64_t)OCR1B, num_str);    // convert value to string
+            usart_write_string(num_str, false);
 
             usart_write_string("", true);   // newline
             return;
@@ -224,22 +266,24 @@ ISR(USART_RXC_vect)
 #endif
 
     if ((c == '\0') || (c == '\n') || (c == '\r') || (index >= sizeof buf - 2)) {
+        // command finished. terminate the buffer and process the line
         buf[index] = '\0';
         process_usart_line(buf);
-        index = 0;
+        index = 0;  // reset buffer for new command
         return;
     }
-
+    
+    // otherwise just add character to buffer
     buf[index++] = c;
 }
 
 
 
 void display_time(time_t time)
-// populates led_matrix with data from ymdhms
+// populate led_matrix with data from time
 {
     struct ymdhms_t t;
-    ymdhms_from_time_t(&t, time);
+    ymdhms_from_time_t(&t, time);   // convert from time_t to human-readable
 
     // handy trick to make things very simple
     // refer to comments @ the definition of LED_MAP
@@ -261,6 +305,7 @@ void display_time(time_t time)
 }
 
 static inline void display_init(void)
+// PWM and dynamic indication init
 {
     // Both PWM channels set to non-inverting Fast PWM
     TCCR1A =  (0<<COM1A0) | (1<<COM1A1) | (0<<COM1B0) | (1<<COM1B1);
@@ -280,16 +325,8 @@ static inline void display_init(void)
     TIMSK |= (1<<TOIE1);
 }
 
-static inline void loop_init(void)
-{
-    // Prescaler /1024
-    TCCR0 = (1<<CS00) | (0<<CS01) | (1<<CS02);
-
-    // Enable Timer0 overflow interrupt
-    TIMSK |= (1<<TOIE0);
-}
-
 static inline void init(void)
+// main init
 {
     DDRB = DDRB_STATE;
     DDRC = DDRC_STATE;
@@ -303,8 +340,6 @@ static inline void init(void)
 
     ds1302_init();
 
-//    loop_init();
-
     struct ymdhms_t initial;
     if (!ds1302_get_time(&initial)) {
         // set time to Epoch if this is a first run
@@ -312,29 +347,18 @@ static inline void init(void)
         ds1302_set_time(&initial);
     }
 
-    permaread();
+    permaread();    // read data from timechip's ram for quick use
 
     sei();
 }
 
 void time_train()
-// the entire pipeline from ds1302 to the display
+// the entire pipeline from the timechip to the display
 {
+    // get current time from the chip, and send it to the display buffer
     time_t time = get_time();
     time = process_time(time);
     display_time(time);
-}
-
-ISR(TIMER0_OVF_vect)
-{
-    static uint8_t loop_counter = 0;
-    if (loop_counter < UPDATE_PRESCALER) {
-        ++loop_counter;
-        return;
-    }
-    loop_counter = 0;
-
-    time_train();
 }
 
 ISR(ADC_vect)   //ADC convertion complete interupt
@@ -348,6 +372,7 @@ int main(void)
     init();
     usart_write_string("42\n", true);
 
+    // main loop
     for (;;) {
         _delay_ms(100);
         time_train();
