@@ -1,0 +1,121 @@
+eeschema (2012-jan-04)-stable  >> Creation date: Sat 13 Oct 2012 12:46:23 PM EEST
+
+#Cmp ( order = Reference )
+| BT1        BATTERY     
+| C1         100n        
+| C2         10μ        
+| C3         100n        
+| C4         100n        
+| C5         22p         
+| C6         100n        
+| C7         22p         
+| C8         10μ        
+| C9         100n        
+| C10        10p         
+| C11        10μ        
+| C12        100n        
+| C13        100n        
+| C14        100n        
+| C15        10n         
+| C16        100μ       
+| C17        100n        
+| C18        100n        
+| D1         LED         
+| D2         LED         
+| F1         FUSE        
+| J1         Anodes      
+| J2         Cathodes    
+| J3         USB_4_MINI  
+| L1         670nH       
+| L2         470nH       
+| Q1         Light Sense 
+| Q2         PNP         
+| Q3         PNP         
+| Q4         PNP         
+| R1         2.2k        
+| R2         10k         
+| R3         2.2k        
+| R4         2.2k        
+| R5         2.2k        
+| R6         SR          
+| R7         4.7k        
+| R8         4.7k        
+| R9         4.7k        
+| R10        LR          
+| R11        LR          
+| R12        LR          
+| R13        1M          
+| R14        510         
+| R15        510         
+| SW1        Glare       
+| U1         74LS08      
+| U2         74LS02      
+| U3         ATMEGA8-P   
+| U4         DS1302      
+| U5         4028        
+| U6         ULN2803     
+| U7         FT232RL     
+| X1         14.7456 MHz 
+| X2         32.768MHz   
+#End Cmp
+
+#Cmp ( order = Value )
+| 100n         C1        
+| 100n         C3        
+| 100n         C4        
+| 100n         C6        
+| 100n         C9        
+| 100n         C12       
+| 100n         C13       
+| 100n         C14       
+| 100n         C17       
+| 100n         C18       
+| 100μ        C16       
+| 10k          R2        
+| 10n          C15       
+| 10p          C10       
+| 10μ         C2        
+| 10μ         C8        
+| 10μ         C11       
+| 14.7456 MHz  X1        
+| 1M           R13       
+| 2.2k         R1        
+| 2.2k         R3        
+| 2.2k         R4        
+| 2.2k         R5        
+| 22p          C5        
+| 22p          C7        
+| 32.768MHz    X2        
+| 4.7k         R7        
+| 4.7k         R8        
+| 4.7k         R9        
+| 4028         U5        
+| 470nH        L2        
+| 510          R14       
+| 510          R15       
+| 670nH        L1        
+| 74LS02       U2        
+| 74LS08       U1        
+| Anodes       J1        
+| ATMEGA8-P    U3        
+| BATTERY      BT1       
+| Cathodes     J2        
+| DS1302       U4        
+| FT232RL      U7        
+| FUSE         F1        
+| Glare        SW1       
+| LED          D1        
+| LED          D2        
+| Light Sense  Q1        
+| LR           R10       
+| LR           R11       
+| LR           R12       
+| PNP          Q2        
+| PNP          Q3        
+| PNP          Q4        
+| SR           R6        
+| ULN2803      U6        
+| USB_4_MINI   J3        
+#End Cmp
+
+#End List
