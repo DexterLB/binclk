@@ -151,6 +151,8 @@ bool process_input_command(char *str)
      * In the case of 'rt', a question mark might be added to read the value
      * after performing post-processing (like drift compensation): 'rt?'
      *
+     * ESC clears the buffer and cancels any previously unfinished command.
+     *
      */
 
     if (str[0] == 'q') {
@@ -265,10 +267,14 @@ ISR(USART_RXC_vect)
     }
 #endif
 
-    if ((c == '\0') || (c == '\n') || (c == '\r') || (index >= sizeof buf - 2)) {
-        // command finished. terminate the buffer and process the line
+    if ((c == '\0') || (c == '\n') || (c == '\r') || (c == 0x1B /* ESC */)
+            || (index >= sizeof buf - 2)) {
+        // command finished. terminate the buffer
         buf[index] = '\0';
-        process_usart_line(buf);
+        
+        if (c != 0x1B)  // only process line if not terminated by ESC
+            process_usart_line(buf);
+
         index = 0;  // reset buffer for new command
         return;
     }
