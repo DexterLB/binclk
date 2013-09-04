@@ -11,6 +11,10 @@ struct {
     int64_t drift;
 } permadata;
 
+#ifdef BRCAL
+uint16_t lastAdc;   // store the last ADC state
+#endif
+
 inline void soft_reset()
 // soft reset of MCU
 {
@@ -252,17 +256,22 @@ ISR(USART_RXC_vect)
         case 'o':
 
             usart_write_string("OCR1A: ", false);
-            char num_str[12] = "";              // empty string to store value
-            itoan((uint64_t)OCR1A, num_str);    // convert value to string
+            char num_str[12] = "";                  // empty string to store value
+            itoan((uint64_t)OCR1A, num_str);        // convert value to string
             usart_write_string(num_str, false);
 
 
             usart_write_string(", OCR1B: ", false);
             memset(num_str, 0, sizeof num_str);     // set the string to empty again
-            itoan((uint64_t)OCR1B, num_str);    // convert value to string
+            itoan((uint64_t)OCR1B, num_str);        // convert value to string
             usart_write_string(num_str, false);
 
-            usart_write_string("", true);   // newline
+            usart_write_string(", ADC: ", false);
+            memset(num_str, 0, sizeof num_str);     // set the string to empty again
+            itoan((uint64_t)lastAdc, num_str);      // convert value to string
+            usart_write_string(num_str, false);
+
+            usart_write_string("", true);           // newline
             return;
     }
 #endif
@@ -331,6 +340,23 @@ static inline void display_init(void)
     TIMSK |= (1<<TOIE1);
 }
 
+static inline void adc_init(void)
+// Init ADC, duh!
+{
+    // Internal 2.56V ref, no left align, ADC0 input
+    ADMUX = (1<<REFS0) | (1<<REFS1) | (0<<ADLAR);
+
+    // Enable ADC and ADC interrupt
+    ADCSRA = (1<<ADEN) | (1<<ADIE)
+        | (1<<ADPS0) | (1<<ADPS1) | (1<<ADPS2); // F_CPU/128
+}
+
+static inline void adc_start(void)
+// Start ADC conversion
+{
+    ADCSRA |= (1<<ADSC);
+}
+
 static inline void init(void)
 // main init
 {
@@ -341,6 +367,7 @@ static inline void init(void)
     TIMSK = 0;
 
     display_init();
+    adc_init();
     usart_init();
     usart_enable_interrupt();
 
@@ -367,8 +394,12 @@ void time_train()
     display_time(time);
 }
 
-ISR(ADC_vect)   //ADC convertion complete interupt
+ISR(ADC_vect)
+//ADC convertion complete interupt
 {
+#ifdef BRCAL
+    lastAdc = ADC;
+#endif
 //    uint8_t adcStatus = (uint8_t)(ADC >> 8);
 
 }
@@ -382,6 +413,7 @@ int main(void)
     for (;;) {
         _delay_ms(100);
         time_train();
+        adc_start();
     }
     return 0;
 }
