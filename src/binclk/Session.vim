@@ -2,7 +2,10 @@ let SessionLoad = 1
 if &cp | set nocp | endif
 let s:cpo_save=&cpo
 set cpo&vim
+map! <S-Insert> <MiddleMouse>
+inoremap <silent> <SNR>24_yrrecord =YRRecord3()
 inoremap <silent> <SNR>19_yrrecord =YRRecord3()
+inoremap <silent> <SNR>22_yrrecord =YRRecord3()
 imap <F5> <Plug>ToggleBackground
 noremap! <F1> 
 nnoremap <silent>  :YRReplace '-1', P
@@ -13,6 +16,7 @@ nnoremap <silent>  :call multiple_cursors#new("n")
 nnoremap <silent>  :YRReplace '1', p
 noremap  :YRShow
 nnoremap <silent> ,t :CtrlPMixed
+noremap ,s :call MakeSession()
 noremap ,p :CtrlPBuffer
 noremap ,f :CtrlP
 map ,ba :1,300 bd!
@@ -36,8 +40,11 @@ xnoremap <silent> p :YRPaste 'p', 'v'
 nnoremap <silent> p :YRPaste 'p'
 xnoremap <silent> x :YRDeleteRange 'v'
 xnoremap <silent> y :YRYankRange 'v'
-nnoremap <silent> <Plug>NetrwBrowseX :call netrw#NetrwBrowseX(expand("<cWORD>"),0)
+map <S-Insert> <MiddleMouse>
+nnoremap <silent> <SNR>24_yrrecord :call YRRecord3()
 nnoremap <silent> <SNR>19_yrrecord :call YRRecord3()
+nnoremap <silent> <Plug>NetrwBrowseX :call netrw#NetrwBrowseX(expand("<cWORD>"),0)
+nnoremap <silent> <SNR>22_yrrecord :call YRRecord3()
 map <C-Left> :bp
 map <C-Right> :bn
 vmap <F5> <Plug>ToggleBackground
@@ -68,6 +75,7 @@ set ignorecase
 set incsearch
 set laststatus=2
 set listchars=tab:⇥\ ,trail:␣,extends:⇉,precedes:⇇,nbsp:·
+set mouse=a
 set nrformats=hex
 set pastetoggle=<F2>
 set ruler
@@ -82,6 +90,7 @@ set smarttab
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set tabpagemax=50
 set tabstop=4
+set termencoding=utf-8
 set title
 set ttimeout
 set ttimeoutlen=50
@@ -93,14 +102,13 @@ set wildmenu
 let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 let v:this_session=expand("<sfile>:p")
 silent only
-cd /ewok/stuff/cool/binclk/soft/binclk
 if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
 badd +1 def.h
 badd +1 usartprimitive.c
-badd +1 main.c
+badd +137 main.c
 badd +1 usartprimitive.h
 badd +1 ds1302.c
 badd +1 BitPort.h
@@ -227,12 +235,12 @@ set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 209 - ((50 * winheight(0) + 26) / 52)
+let s:l = 110 - ((54 * winheight(0) + 28) / 56)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-209
-normal! 05|
+110
+normal! 09|
 tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf
