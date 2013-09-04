@@ -189,25 +189,37 @@ ISR(USART_RXC_vect)
     c = usart_read_byte();
 
 #ifdef BRCAL
-    if (c == 'u' && OCR1A < PWM_TOP) { ++OCR1A; return; }
-    if (c == 'j' && OCR1A > 0)       { --OCR1A; return; }
-    if (c == 'i' && OCR1B < PWM_TOP) { ++OCR1B; return; }
-    if (c == 'k' && OCR1B > 0)       { --OCR1B; return; }
-    if (c == 'o') {
-        char foo[12] = "";
+    // Brightness calibration mode
+    // LED brightness is controlled with the 'ujik' keys
+    // the 'o' key displays current brightness status
+    switch(c) {
+        case 'u':
+            if (OCR1A < PWM_TOP) ++OCR1A;
+            return;
+        case 'j':
+            if (OCR1A > 0) --OCR1A;
+            return;
+        case 'i':
+            if (OCR1B < PWM_TOP) ++OCR1B;
+            return;
+        case 'k':
+            if (OCR1B > 0) --OCR1B;
+            return;
+        case 'o':
 
-        usart_write_string("OCR1A: ", false);
-        itoan((uint64_t)OCR1A, foo);
-        usart_write_string(foo, false);
+            usart_write_string("OCR1A: ", false);
+            char foo[12] = "";              // empty string to store value
+            itoan((uint64_t)OCR1A, foo);    // convert value to string
+            usart_write_string(foo, false);
 
-        memset(foo, 0, sizeof foo);
 
-        usart_write_string(", OCR1B: ", false);
-        itoan((uint64_t)OCR1B, foo);
-        usart_write_string(foo, false);
+            usart_write_string(", OCR1B: ", false);
+            memset(foo, 0, sizeof foo);     // set the string to empty again
+            itoan((uint64_t)OCR1B, foo);    // convert value to string
+            usart_write_string(foo, false);
 
-        usart_write_string("", true);
-        return;
+            usart_write_string("", true);   // newline
+            return;
     }
 #endif
 
