@@ -1,6 +1,6 @@
-PCBNEW-BOARD Version 2 date Thu 20 Jun 2013 03:55:20 PM EEST
+PCBNEW-BOARD Version 2 date Sat 14 Sep 2013 11:39:45 AM EEST
 
-# Created by Pcbnew(2013-mar-30)-stable
+# Created by Pcbnew(2013-may-18)-stable
 
 $GENERAL
 encoding utf-8
@@ -21,7 +21,7 @@ $EndGENERAL
 $SHEETDESCR
 Sheet A4 11693 8268
 Title ""
-Date "20 jun 2013"
+Date "14 sep 2013"
 Rev ""
 Comp ""
 Comment1 ""
@@ -61,7 +61,7 @@ Pad2MaskClearance 0.254
 SolderMaskMinWidth 0
 AuxiliaryAxisOrg 0 0
 VisibleElements 7FFFFFFF
-PcbPlotParams (pcbplotparams (layerselection 1) (usegerberextensions true) (excludeedgelayer false) (linewidth 60) (plotframeref false) (viasonmask false) (mode 1) (useauxorigin false) (hpglpennumber 1) (hpglpenspeed 20) (hpglpendiameter 15) (hpglpenoverlay 0) (psnegative false) (psa4output false) (plotreference true) (plotvalue true) (plotothertext true) (plotinvisibletext false) (padsonsilk false) (subtractmaskfromsilk false) (outputformat 2) (mirror false) (drillshape 1) (scaleselection 1) (outputdirectory ""))
+PcbPlotParams (pcbplotparams (layerselection 1) (usegerberextensions true) (excludeedgelayer false) (linewidth 0.150000) (plotframeref false) (viasonmask false) (mode 1) (useauxorigin false) (hpglpennumber 1) (hpglpenspeed 20) (hpglpendiameter 15) (hpglpenoverlay 0) (psnegative false) (psa4output false) (plotreference true) (plotvalue true) (plotothertext true) (plotinvisibletext false) (padsonsilk false) (subtractmaskfromsilk false) (outputformat 2) (mirror false) (drillshape 1) (scaleselection 1) (outputdirectory ""))
 $EndSETUP
 
 $EQUIPOT
@@ -807,7 +807,7 @@ Ro 0 0 0
 $EndSHAPE3D
 $EndMODULE SM0805
 $MODULE 1pin
-Po 134.62 66.04 0 15 50A54D26 51C2EA34 ~~
+Po 134.9375 64.77 0 15 50A54D26 51C2EA34 ~~
 Li 1pin
 Cd module 1 pin (ou trou mecanique de percage)
 Kw DEV
@@ -2525,7 +2525,7 @@ Po 0 172.085 60.325 172.085 136.525 0.381
 De 28 0 900 0 0
 $EndDRAWSEGMENT
 $DRAWSEGMENT
-Po 3 134.62 66.04 136.525 66.04 0.381
+Po 3 134.9375 64.77 136.8425 64.77 0.381
 De 24 0 900 0 0
 $EndDRAWSEGMENT
 $DRAWSEGMENT
@@ -2836,7 +2836,7 @@ De 0 0 24 0 0
 Po 0 118.4275 117.1575 118.4275 118.745 0.59944 -1
 De 0 0 24 51C2F7CC 0
 Po 0 126.6825 102.235 126.6825 104.775 0.59944 -1
-De 0 0 25 0 C00000
+De 0 0 25 0 0
 Po 0 110.8075 92.3925 110.8075 74.6125 0.59944 -1
 De 0 0 26 0 0
 Po 0 119.38 66.04 110.8075 74.6125 0.59944 -1
