@@ -14,8 +14,8 @@
 
 #include "bit_operations.h"
 #include "BitPort.h"
-#include "pinout.h"
 #include "compat.h"
+#include "ledmap.h"
 
 #include "usartprimitive.h"
 
