@@ -2,12 +2,12 @@ let SessionLoad = 1
 if &cp | set nocp | endif
 let s:cpo_save=&cpo
 set cpo&vim
-map! <S-Insert> <MiddleMouse>
-inoremap <silent> <SNR>24_yrrecord =YRRecord3()
-inoremap <silent> <SNR>19_yrrecord =YRRecord3()
 inoremap <silent> <SNR>22_yrrecord =YRRecord3()
+inoremap <silent> <SNR>19_yrrecord =YRRecord3()
+inoremap <silent> <SNR>24_yrrecord =YRRecord3()
 imap <F5> <Plug>ToggleBackground
 noremap! <F1> 
+map! <S-Insert> <MiddleMouse>
 nnoremap <silent>  :YRReplace '-1', P
 map  :bp
 map  :bn
@@ -16,6 +16,8 @@ nnoremap <silent>  :call multiple_cursors#new("n")
 nnoremap <silent>  :YRReplace '1', p
 noremap  :YRShow
 nnoremap <silent> ,t :CtrlPMixed
+map ,q :Bclose
+map ,cd :cd %:p:h
 noremap ,s :call MakeSession()
 noremap ,p :CtrlPBuffer
 noremap ,f :CtrlP
@@ -40,15 +42,15 @@ xnoremap <silent> p :YRPaste 'p', 'v'
 nnoremap <silent> p :YRPaste 'p'
 xnoremap <silent> x :YRDeleteRange 'v'
 xnoremap <silent> y :YRYankRange 'v'
-map <S-Insert> <MiddleMouse>
-nnoremap <silent> <SNR>24_yrrecord :call YRRecord3()
+nnoremap <silent> <SNR>22_yrrecord :call YRRecord3()
 nnoremap <silent> <SNR>19_yrrecord :call YRRecord3()
 nnoremap <silent> <Plug>NetrwBrowseX :call netrw#NetrwBrowseX(expand("<cWORD>"),0)
-nnoremap <silent> <SNR>22_yrrecord :call YRRecord3()
+nnoremap <silent> <SNR>24_yrrecord :call YRRecord3()
 map <C-Left> :bp
 map <C-Right> :bn
 vmap <F5> <Plug>ToggleBackground
 nmap <F5> <Plug>ToggleBackground
+map <S-Insert> <MiddleMouse>
 inoremap  u
 noremap ì l
 noremap ë k
@@ -108,11 +110,10 @@ endif
 set shortmess=aoO
 badd +1 def.h
 badd +1 usartprimitive.c
-badd +137 main.c
+badd +5 main.c
 badd +1 usartprimitive.h
 badd +1 ds1302.c
 badd +1 BitPort.h
-badd +1 pinout.h
 badd +1 bit_operations.h
 badd +1 compat.h
 badd +1 main.h
@@ -122,14 +123,14 @@ badd +1 macros.h
 badd +1 datetimeconvert.h
 badd +1 ds1302_settings.h
 args def.h usartprimitive.c main.c usartprimitive.h ds1302.c BitPort.h pinout.h bit_operations.h compat.h main.h datetimeconvert.c ds1302.h macros.h datetimeconvert.h ds1302_settings.h
-edit main.c
+edit bit_operations.h
 set splitbelow splitright
 set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
 argglobal
-edit main.c
+edit bit_operations.h
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
@@ -162,8 +163,8 @@ setlocal nodiff
 setlocal equalprg=
 setlocal errorformat=
 setlocal expandtab
-if &filetype != 'c'
-setlocal filetype=c
+if &filetype != 'cpp'
+setlocal filetype=cpp
 endif
 setlocal foldcolumn=0
 setlocal foldenable
@@ -221,8 +222,8 @@ setlocal statusline=
 setlocal suffixesadd=
 setlocal swapfile
 setlocal synmaxcol=3000
-if &syntax != 'c'
-setlocal syntax=c
+if &syntax != 'cpp'
+setlocal syntax=cpp
 endif
 setlocal tabstop=4
 setlocal tags=
@@ -235,12 +236,12 @@ set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 110 - ((54 * winheight(0) + 28) / 56)
+let s:l = 1 - ((0 * winheight(0) + 28) / 56)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-110
-normal! 09|
+1
+normal! 0
 tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf
