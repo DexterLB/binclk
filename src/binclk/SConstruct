@@ -48,13 +48,17 @@ optlevel = 's'
 
 # programmer ID, used by AVRDUDE
 # examples: 'stk500', 'avr910', 'avrisp', 'pony'
-avrdude_prid = 'avr910'
+AddOption('--programmer', dest='programmer', type='string', nargs=1
+            , action='store', help='Programmer id as used by avrdude')
+avrdude_prid = GetOption('programmer') or 'avr910'
 
 # port - serial or parallel port to which the
 # hardware programmer is attached.
 # examples: '/dev/ttyS0', '/dev/ttyS1', '/dev/ttyUSB0'
-# avrdude_port = '/dev/ttyS1'
-avrdude_port = 'COM1'
+AddOption('--port', dest='port', type='string', nargs=1
+            , action='store', help='Port id as used by avrdude')
+avrdude_port = GetOption('port') or '/dev/ttyUSB0'
+# avrdude_port = 'COM1'
 
 # -------- compiler flags ---------
 # these are the flags passed to the compilers
