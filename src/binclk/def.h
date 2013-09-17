@@ -4,7 +4,8 @@
 #include <stdint.h>
 
 // CPU base frequency
-#define F_CPU 7327800ul
+#define F_UART_STANDARD 7327800ul
+#define F_CPU F_UART_STANDARD * 2
 
 // USART BAUD rate
 #define BAUDRATE 19200

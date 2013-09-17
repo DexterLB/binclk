@@ -216,7 +216,7 @@
 .equ SB2 = 0x93 					; Signature byte 2
 .equ SB3 = 0x1e 					; Signature byte 3
 
-.equ UBR = 23 						; Baud rate = 19.2 kbps with fCK = 7.3728 MHz
+.equ UBR = 47 						; Baud rate = 19.2 kbps with fCK = 7.3728*2 MHz
 
 .equ ESC = 27						; Ascii 27 = Escape
 
