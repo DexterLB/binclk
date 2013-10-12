@@ -1,5 +1,6 @@
 #include "main.h"
-#define BRCAL
+// #define BRCAL
+// #define ADC_DEBUG
 
 uint8_t led_matrix[CNT_N] = {};
 uint8_t led_index = 0;
@@ -11,7 +12,7 @@ struct {
     int64_t drift;
 } permadata;
 
-#ifdef BRCAL
+#ifdef ADC_DEBUG
 uint16_t lastAdc;   // store the last ADC state
 #endif
 
@@ -227,6 +228,33 @@ void process_usart_line(char *str)
     }
 }
 
+inline uint32_t interpolate_light(uint16_t x)
+// linearly interpolates between 2 values in the light table
+{
+    uint8_t index = x / LIGHT_TABLE_STEP;
+    uint32_t x0 = LIGHT_TABLE_STEP * index;
+    uint32_t x1 = LIGHT_TABLE_STEP * (index + 1);
+    uint32_t y0 = light_table[index];
+    uint32_t y1 = light_table[index + 1];
+    uint32_t result = y0 - (((y0 - y1)*(x - x0))/(x1-x0));
+    // the optimiser does a wonderful job fixing all those "variables"! :)
+    if (result > PWM_TOP)
+        return PWM_TOP;
+    return result;
+}
+
+ISR(ADC_vect)
+//ADC convertion complete interupt
+{
+#ifdef ADC_DEBUG
+    lastAdc = ADC;
+#endif
+    uint16_t adval = ADC;
+    uint32_t light = interpolate_light(adval);
+    OCR1A = (uint16_t)light;
+    OCR1B = (uint16_t)((light * LIGHT_OFF_MULTIPLIER) / LIGHT_OFF_DIVISOR);
+}
+
 ISR(USART_RXC_vect)
 // USART character received interrupt
 {
@@ -272,6 +300,19 @@ ISR(USART_RXC_vect)
             usart_write_string(num_str, false);
 
             usart_write_string("", true);           // newline
+            return;
+    }
+#endif
+
+#ifdef ADC_DEBUG
+    switch(c) {
+        char num_str[12] = "";
+        case 'a':
+            itoan((uint64_t)lastAdc, num_str);
+            usart_write_string(num_str, false);
+            usart_write_string(" ", false);
+            itoan((uint64_t)interpolate_light(lastAdc), num_str);
+            usart_write_string(num_str, true);
             return;
     }
 #endif
@@ -392,16 +433,6 @@ void time_train()
     time_t time = get_time();
     time = process_time(time);
     display_time(time);
-}
-
-ISR(ADC_vect)
-//ADC convertion complete interupt
-{
-#ifdef BRCAL
-    lastAdc = ADC;
-#endif
-//    uint8_t adcStatus = (uint8_t)(ADC >> 8);
-
 }
 
 int main(void)

@@ -1,5 +1,9 @@
 #ifndef DEF_H
 #define DEF_H
+
+#define STRINGIFY(s) XSTRINGIFY(s)
+#define XSTRINGIFY(s) #s
+
 #include "macros.h"
 #include <stdint.h>
 

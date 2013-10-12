@@ -16,6 +16,7 @@
 #include "BitPort.h"
 #include "compat.h"
 #include "ledmap.h"
+#include "light.h"
 
 #include "usartprimitive.h"
 
