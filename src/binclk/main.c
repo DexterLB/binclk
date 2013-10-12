@@ -249,9 +249,13 @@ ISR(ADC_vect)
 #ifdef ADC_DEBUG
     lastAdc = ADC;
 #endif
-    uint16_t adval = ADC;
+    static uint16_t adval = 1023;
+    if (ADC == adval)
+        return;
+    adval = MIN(MAX(adval, ADC - LIGHT_STEP), ADC + LIGHT_STEP);
+
     uint32_t light = interpolate_light(adval);
-    OCR1A = (uint16_t)light;
+    OCR1A = (light < LIGHT_MIN) ? LIGHT_MIN : ((uint16_t)light);
     OCR1B = (uint16_t)((light * LIGHT_OFF_MULTIPLIER) / LIGHT_OFF_DIVISOR);
 }
 

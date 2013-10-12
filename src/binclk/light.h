@@ -8,6 +8,10 @@
 #define LIGHT_OFF_MULTIPLIER    1000
 #define LIGHT_OFF_DIVISOR       190566
 
+#define LIGHT_MIN               18
+
+#define LIGHT_STEP              3
+
 const uint32_t light_table[LIGHT_TABLE_COUNT] = {
       10000
     , 8443
