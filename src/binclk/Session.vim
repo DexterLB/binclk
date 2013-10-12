@@ -2,27 +2,28 @@ let SessionLoad = 1
 if &cp | set nocp | endif
 let s:cpo_save=&cpo
 set cpo&vim
-inoremap <silent> <SNR>22_yrrecord =YRRecord3()
-inoremap <silent> <SNR>19_yrrecord =YRRecord3()
 inoremap <silent> <SNR>24_yrrecord =YRRecord3()
+inoremap <silent> <SNR>19_yrrecord =YRRecord3()
+inoremap <silent> <SNR>22_yrrecord =YRRecord3()
+inoremap <silent> <SNR>25_yrrecord =YRRecord3()
 imap <F5> <Plug>ToggleBackground
 noremap! <F1> 
 map! <S-Insert> <MiddleMouse>
 nnoremap <silent>  :YRReplace '-1', P
-map  :bp
-map  :bn
+noremap  :bp
+noremap  :bn
 xnoremap <silent>  :call multiple_cursors#new("v")
 nnoremap <silent>  :call multiple_cursors#new("n")
 nnoremap <silent>  :YRReplace '1', p
 noremap  :YRShow
 nnoremap <silent> ,t :CtrlPMixed
-map ,q :Bclose
-map ,cd :cd %:p:h
+noremap ,q :Bclose
+noremap ,cd :cd %:p:h
 noremap ,s :call MakeSession()
 noremap ,p :CtrlPBuffer
 noremap ,f :CtrlP
-map ,ba :1,300 bd!
-map ,bd :Bclose
+noremap ,ba :1,300 bd!
+noremap ,bd :Bclose
 nmap <silent> ,sv :so $MYVIMRC
 nmap <silent> ,ev :e $MYVIMRC
 nnoremap ; :
@@ -42,12 +43,13 @@ xnoremap <silent> p :YRPaste 'p', 'v'
 nnoremap <silent> p :YRPaste 'p'
 xnoremap <silent> x :YRDeleteRange 'v'
 xnoremap <silent> y :YRYankRange 'v'
-nnoremap <silent> <SNR>22_yrrecord :call YRRecord3()
-nnoremap <silent> <SNR>19_yrrecord :call YRRecord3()
-nnoremap <silent> <Plug>NetrwBrowseX :call netrw#NetrwBrowseX(expand("<cWORD>"),0)
 nnoremap <silent> <SNR>24_yrrecord :call YRRecord3()
-map <C-Left> :bp
-map <C-Right> :bn
+nnoremap <silent> <SNR>19_yrrecord :call YRRecord3()
+nnoremap <silent> <SNR>22_yrrecord :call YRRecord3()
+nnoremap <silent> <Plug>NetrwBrowseX :call netrw#NetrwBrowseX(expand("<cWORD>"),0)
+nnoremap <silent> <SNR>25_yrrecord :call YRRecord3()
+noremap <C-Left> :bp
+noremap <C-Right> :bn
 vmap <F5> <Plug>ToggleBackground
 nmap <F5> <Plug>ToggleBackground
 map <S-Insert> <MiddleMouse>
@@ -67,8 +69,7 @@ set copyindent
 set display=lastline
 set expandtab
 set fileencodings=ucs-bom,utf-8,default,latin1
-set fileformats=unix,dos,mac
-set guifont=Droid\ Sans\ Mono\ 11
+set guifont=Droid\ Sans\ Mono\ 12
 set guioptions=
 set helplang=en
 set hidden
@@ -85,7 +86,6 @@ set runtimepath=~/.vim,~/.vim/bundle/vim-colors-solarized,~/.vim/bundle/vim-colo
 set scrolloff=1
 set shiftround
 set shiftwidth=4
-set showcmd
 set showmatch
 set sidescrolloff=5
 set smarttab
@@ -97,10 +97,10 @@ set title
 set ttimeout
 set ttimeoutlen=50
 set undolevels=1024
-set viminfo=!,'100,<50,s10,h
 set visualbell
 set wildignore=*.swp,*.bak,*.pyc,*.class,*.hi
 set wildmenu
+set window=51
 let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 let v:this_session=expand("<sfile>:p")
 silent only
@@ -122,6 +122,7 @@ badd +1 ds1302.h
 badd +1 macros.h
 badd +1 datetimeconvert.h
 badd +1 ds1302_settings.h
+badd +0 pinout.h
 args def.h usartprimitive.c main.c usartprimitive.h ds1302.c BitPort.h pinout.h bit_operations.h compat.h main.h datetimeconvert.c ds1302.h macros.h datetimeconvert.h ds1302_settings.h
 edit bit_operations.h
 set splitbelow splitright
@@ -177,7 +178,7 @@ setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldtext=foldtext()
 setlocal formatexpr=
-setlocal formatoptions=croql
+setlocal formatoptions=tcq
 setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
 setlocal iminsert=2
@@ -236,7 +237,7 @@ set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 28) / 56)
+let s:l = 1 - ((0 * winheight(0) + 25) / 50)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
