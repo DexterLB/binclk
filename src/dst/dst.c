@@ -12,6 +12,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#define slli signed long long int
+
 bool is_dst(time_t t)
 {
     struct tm *time;
@@ -44,7 +46,7 @@ void print_time(time_t from, time_t to)
     printf("%llu %llu\n", (unsigned long long)from, (unsigned long long)to);
 }
 
-void multisearch(time_t start, time_t end, time_t delta)
+void multisearch(time_t start, time_t end, time_t delta, slli offset)
 // perform multiple searches in successive periods, defined by delta,
 // until end is reached
 {
@@ -59,7 +61,7 @@ void multisearch(time_t start, time_t end, time_t delta)
             } else {
                 // last_on contains the last change from nodst to dst.
                 // so now we print the period in which there is dst
-                print_time(last_on, threshold);
+                print_time(last_on + offset, threshold + offset);
             }
         } else {
             start = start + delta;
@@ -71,11 +73,14 @@ int main(int argc, char *argv[])
 {
     if (argc < 4) return 1;
     time_t start, end, delta;
+    slli offset = 0;
     start = (time_t)strtoull(argv[1], NULL, 10);
     end =   (time_t)strtoull(argv[2], NULL, 10);
     delta = (time_t)strtoull(argv[3], NULL, 10);
+    if (argc > 4)
+        offset = strtoll(argv[4], NULL, 10);
 
-    multisearch(start, end, delta);
+    multisearch(start, end, delta, offset);
 
     return 0;
 }
