@@ -48,18 +48,18 @@ void multisearch(time_t start, time_t end, time_t delta)
 // perform multiple searches in successive periods, defined by delta,
 // until end is reached
 {
-    time_t treshold;
+    time_t threshold;
     time_t last_on = 0;
     while (start < end) {
-        treshold = search(start, start + delta);
-        if (treshold) {
-            start = treshold;
-            if (is_dst(treshold)) {
-                last_on = treshold;
+        threshold = search(start, start + delta);
+        if (threshold) {
+            start = threshold;
+            if (is_dst(threshold)) {
+                last_on = threshold;
             } else {
                 // last_on contains the last change from nodst to dst.
                 // so now we print the period in which there is dst
-                print_time(last_on, treshold);
+                print_time(last_on, threshold);
             }
         } else {
             start = start + delta;
