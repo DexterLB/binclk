@@ -24,7 +24,7 @@ time_t search(time_t start, time_t end)
 // changes within the period
 {
     time_t half;
-    if (is_dst(start) == is_dst(end))
+    if (is_dst(start) == is_dst(end) || end - start <= 1)
         return 0;   // nothing to look for in this interval
 
     // binary search
@@ -39,9 +39,9 @@ time_t search(time_t start, time_t end)
     return end;
 }
 
-void print_time(time_t time)
+void print_time(time_t from, time_t to)
 {
-    printf("%llu %s\n", (unsigned long long)time, (is_dst(time) ? "on" : "off"));
+    printf("%llu %llu\n", (unsigned long long)from, (unsigned long long)to);
 }
 
 void multisearch(time_t start, time_t end, time_t delta)
@@ -49,11 +49,18 @@ void multisearch(time_t start, time_t end, time_t delta)
 // until end is reached
 {
     time_t treshold;
+    time_t last_on = 0;
     while (start < end) {
         treshold = search(start, start + delta);
         if (treshold) {
             start = treshold;
-            print_time(treshold);
+            if (is_dst(treshold)) {
+                last_on = treshold;
+            } else {
+                // last_on contains the last change from nodst to dst.
+                // so now we print the period in which there is dst
+                print_time(last_on, treshold);
+            }
         } else {
             start = start + delta;
         }
