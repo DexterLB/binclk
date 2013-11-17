@@ -45,7 +45,9 @@ time_t process_time(time_t time)
     // drift compensation
     if (permadata.drift)
         time += (time - permadata.driftbase) / permadata.drift;
-    return time;
+
+    // DST correction
+    return dst(time);
 }
 
 void update_display()

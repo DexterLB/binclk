@@ -24,6 +24,8 @@
 
 #include "datetimeconvert.h"
 
+#include "dst.h"
+
 
 
 #include <util/delay.h>
