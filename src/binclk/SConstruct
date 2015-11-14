@@ -136,7 +136,7 @@ env['AVRDUDE'] = 'avrdude'
 # old or new avr-size? new one supports the -C
 # option for human-readable output, and the old
 # one doesn't
-oldsize = True
+oldsize = False
 
 # set flags into the environment
 env.Append(CCFLAGS = cflags)
